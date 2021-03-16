@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.mars.exercise.model.Person;
 import com.mars.exercise.repository.PersonRepository;
 
+
 @Service
 public class PersonServiceImpl  implements PersonService {
   
@@ -15,33 +16,27 @@ public class PersonServiceImpl  implements PersonService {
     this.personRepository = personRepository;
   }
   
-  public List<Person> getAllPersons()
-  {
+  public List<Person> getAllPersons()  {
     return this.personRepository.findAll();
   }
   
-  public Person getPersonById(Long id)
-  {
+  public Person getPersonById(Long id)  {
     return (Person)this.personRepository.getOne(id);
   }
   
-  public Person createNewPerson(Person person)
-  {
+  public Person createNewPerson(Person person)  {
     return (Person)this.personRepository.save(person);
   }
   
-  public Person savePerson(Long id, Person person)
-  {
+  public Person savePerson(Long id, Person person)  {
     return (Person)this.personRepository.save(person);
   }
   
-  public int countPersons()
-  {
+  public int countPersons()  {
     return getAllPersons().size();
   }
   
-  public void deletePersonById(Long id)
-  {
+  public void deletePersonById(Long id)  {
     this.personRepository.deleteById(id);
   }
 }

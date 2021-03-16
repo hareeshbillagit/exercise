@@ -23,142 +23,96 @@ public class ExerciseApplication implements CommandLineRunner {
 	  @Autowired
 	  private PersonService personService;
 	  
-	  public static void main(String[] args)
-	  {
+	  public static void main(String[] args) {
 	    SpringApplication.run(ExerciseApplication.class, args);
 	  }
 	  
-	  public void run(String... args)
-	    throws Exception
-	  {
-	    try
-	    {
-	      BufferedReader buffReader = new BufferedReader(new InputStreamReader(System.in));Throwable localThrowable3 = null;
-	      try
-	      {
+	  public void run(String... args) throws Exception {
+	      try(BufferedReader buffReader = new BufferedReader(new InputStreamReader(System.in))) {
 	        log.info("Application Started!!");
 	        
-	        System.out.println("Please provide valid actions(insert/update/delete/count/all/exit):");
+	        log.info("Please provide valid actions(insert/update/delete/count/all/exit):");
 	        String line = "";
-	        while (((line = buffReader.readLine()) != null) && (!line.equals("exit")))
-	        {
-	          switch (line)
-	          {
-	          case "insert": 
-	            insertPerson(buffReader);
-	            break;
-	          case "update": 
-	            updatePerson(buffReader);
-	            break;
-	          case "delete": 
-	            deletePerson(buffReader);
-	            break;
-	          case "count": 
-	            log.info("All Persons count:{}", Integer.valueOf(this.personService.countPersons()));
-	            break;
-	          case "all": 
-	            log.info("All Persons List:{}", this.personService.getAllPersons());
-	            break;
-	          default: 
-	            System.out.println("Invalid input, pease try");
+	        while (((line = buffReader.readLine()) != null) && (!line.equals("exit"))) {
+	          switch (line) {
+		          case "insert": 
+		            insertPerson(buffReader);
+		            break;
+		          case "update": 
+		            updatePerson(buffReader);
+		            break;
+		          case "delete": 
+		            deletePerson(buffReader);
+		            break;
+		          case "count": 
+		            log.info("All Persons count:{}", Integer.valueOf(this.personService.countPersons()));
+		            break;
+		          case "all": 
+		            log.info("All Persons List:{}", this.personService.getAllPersons());
+		            break;
+		          default: 
+		            log.info("Invalid input, pease try");
 	          }
-	          System.out.println("Please provide valid actions(insert/update/delete/count/all/exit):");
+	          log.info("Please provide valid actions(insert/update/delete/count/all/exit):");
 	        }
 	        log.info("exit from application!!");
-	      }
-	      catch (Throwable localThrowable1)
-	      {
-	        localThrowable3 = localThrowable1;throw localThrowable1;
-	      }
-	      finally
-	      {
-	        if (buffReader != null) {
-	          if (localThrowable3 != null) {
-	            try
-	            {
-	              buffReader.close();
-	            }
-	            catch (Throwable localThrowable2)
-	            {
-	              localThrowable3.addSuppressed(localThrowable2);
-	            }
-	          } else {
-	            buffReader.close();
-	          }
-	        }
-	      }
-	    }
-	    catch (Exception exception)
-	    {
-	      log.error("Exception Occured:" + exception);
-	    }
+	      } catch (Exception exception) {
+		      log.error("Exception Occured while processing:" + exception);
+		  }
 	  }
+	    
 	  
-	  void insertPerson(BufferedReader buffReader)
-	    throws IOException
-	  {
-	    System.out.println("Please enter details in JSON format:");
+	  
+	  void insertPerson(BufferedReader buffReader) throws IOException {
+	    log.info("Please enter details in JSON format:");
 	    String personString = buffReader.readLine();
 	    log.info("insert JSON String:{}", personString);
-	    try
-	    {
+	    try {
 	      Person person = (Person)new Gson().fromJson(personString, Person.class);
 	      Person personPersisted = this.personService.createNewPerson(person);
 	      log.info("new entry added successfully:{}", personPersisted);
-	    }
-	    catch (Exception exception)
-	    {
+	    } catch (Exception exception) {
 	      log.error("Exception Occured:" + exception);
 	    }
 	  }
 	  
-	  void updatePerson(BufferedReader buffReader)
-	    throws IOException
-	  {
-	    System.out.println("Please enter details in JSON format:");
+	  
+	  void updatePerson(BufferedReader buffReader) throws IOException {
+	    log.info("Please enter details in JSON format:");
 	    String personString = buffReader.readLine();
 	    log.info("insert JSON String:{}", personString);
-	    try
-	    {
+	    try {
 	      Person person = (Person)new Gson().fromJson(personString, Person.class);
+	      log.info("person details will be updated with :{}", person);
 	      Person personUpdated = this.personService.savePerson(person.getId(), person);
 	      log.info("person details updated successfully:{}", personUpdated);
 	    }
-	    catch (InvalidDataAccessApiUsageException exception)
-	    {
+	    catch (InvalidDataAccessApiUsageException exception) {
 	      log.error("Invalid input!!");
 	      log.error("Exception Occured:" + exception);
-	    }
-	    catch (LazyInitializationException exception)
-	    {
+	    } catch (LazyInitializationException exception) {
 	      log.error("Invalid input/object not exists!!");
 	      log.error("Exception Occured:" + exception);
-	    }
-	    catch (Exception exception)
-	    {
+	    } catch (Exception exception) {
 	      log.error("Exception Occured:" + exception);
 	    }
 	  }
 	  
-	  void deletePerson(BufferedReader buffReader)
-	    throws IOException
-	  {
-	    System.out.println("Please enter Person Id in numeric:");
+	  
+	  void deletePerson(BufferedReader buffReader) throws IOException {
+	    log.info("Please enter Person Id in numeric:");
 	    String personId = buffReader.readLine();
-	    try
-	    {
-	      if (this.personService.getPersonById(Long.valueOf(personId)) != null) {
+	    try {
+	    	Person person = this.personService.getPersonById(Long.valueOf(personId));
+	      if (person != null) {
+	    	log.info("person id {} will be deleted:{}",personId, person);
 	        this.personService.deletePersonById(Long.valueOf(personId));
 	      }
-	    }
-	    catch (NumberFormatException exception)
-	    {
+	    } catch (NumberFormatException exception)	{
 	      log.error("Invalid input");
 	      log.error("Exception Occured:" + exception);
-	    }
-	    catch (Exception exception)
-	    {
+	    } catch (Exception exception) {
 	      log.error("Exception Occured:" + exception);
 	    }
 	  }
-	}
+}
