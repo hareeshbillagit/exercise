@@ -103,9 +103,8 @@ public class ExerciseApplication implements CommandLineRunner {
 	    log.info("Please enter Person Id in numeric:");
 	    String personId = buffReader.readLine();
 	    try {
-	    	Person person = this.personService.getPersonById(Long.valueOf(personId));
-	      if (person != null) {
-	    	log.info("person id {} will be deleted:{}",personId, person);
+	      if (this.personService.getPersonById(Long.valueOf(personId)) != null) {
+	    	log.info("person id {} will be deleted",personId);
 	        this.personService.deletePersonById(Long.valueOf(personId));
 	      }
 	    } catch (NumberFormatException exception)	{
